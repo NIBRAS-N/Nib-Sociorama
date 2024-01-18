@@ -1,0 +1,15 @@
+# SocialMediaApp
+
+**Nib-Sociorama** is a platform where users can connect, share, and engage with each other through posts, comments, likes, and follows.
+
+## Features
+
+- **User Authentication:** Secure user authentication to ensure the privacy and security of user accounts.
+
+- **Post Creation:** Users can create and share posts with text, images, or videos.
+
+- **Commenting:** Users can engage with posts by leaving comments.
+
+- **Liking:** Users can express their appreciation for posts by liking them.
+
+- **Follow/Unfollow:** Users can follow/unfollow other users to see their posts in their feed.
