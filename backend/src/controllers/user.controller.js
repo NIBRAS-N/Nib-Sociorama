@@ -5,6 +5,8 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Post } from "../models/post.model.js";
 import { sendEmail } from "../middlewares/sendEmail.middleware.js";
 import crypto from "crypto"
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
+
 const generateToken = async(userId) =>{
     try {
         console.log(userId)
@@ -35,12 +37,29 @@ const userRegister = asyncHandler( async (req,res)=>{
     }
     )
     if(existedUser) throw new ApiError(409, "User with email or username already exists")
+
+    const avatarLocalPath = req.file?.path;
+
+    // console.log("req.files ", req.file);
+
+    if(!avatarLocalPath) {
+        throw new ApiError(400,"avatar file is required");
+    }
     
+    const avatar = await uploadOnCloudinary(avatarLocalPath)
+    
+    // console.log("avatar is uploaded to cloudinary ", avatar)
+
+    if (!avatar) {
+        throw new ApiError(400, "Avatar file is not uploaded in cloudinary")
+    }
+   
+
     const user = await User.create({
         name,
         email,
         password,
-        avatar:{public_id:"sample_id",url:"sample_url"}
+        avatar:{public_id:avatar.public_id , url:avatar.url}
     })
     
     const token = await generateToken(user?._id);
@@ -52,7 +71,7 @@ const userRegister = asyncHandler( async (req,res)=>{
     if(!createdUser) throw new ApiError(500,"something went wrong registering the user")
 
     
-
+    
     const options = {
         expires: new Date(Date.now()+90*24*60*1000),
         httpOnly: true,

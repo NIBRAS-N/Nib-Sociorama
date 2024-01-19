@@ -2,11 +2,14 @@ import { Router } from "express";
 import { verifyJWT } from "../middlewares/auth.middleware.js";
 import { userRegister,userLogin,followUser,logout,updatePassword,updateProfile,deleteUser,myProfile, getAllUser,getUserProfile,forgotPassword,resetPassword } from "../controllers/user.controller.js";
 
+import { upload } from "../middlewares/multer.middleware.js";
+
+
 const router = Router()
 
 // router.route("/user/login").post(createPost)
 
-router.route("/register").post(userRegister)
+router.route("/register").post(upload.single("avatar"),userRegister)
 router.route("/login").post(userLogin)
 router.route("/follow/:id").get(verifyJWT,followUser)
 router.route("/logout").post(verifyJWT,logout)

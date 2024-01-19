@@ -3,15 +3,25 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-
+import { uploadOnCloudinary } from "../utils/cloudinary.js";
 const createPost = asyncHandler(async (req,res)=>{
     const {caption} = req.body;
+
+    const bannerLocalPath = req.file?.path;
+
+    if(!bannerLocalPath) {
+        throw new ApiError(400, "banner file is required")
+    }
+
+    const banner =  await uploadOnCloudinary(bannerLocalPath)
+
+    if(!banner) throw new ApiError(400,"Something went wrong on uploading banner")
 
     const newPost = await Post.create({
         caption,
         image:{
-            public_id:"sample",
-            url:"sample"
+            public_id:banner.public_id,
+            url:banner.url
         },
         owner:req.user?._id
     })
@@ -34,7 +44,6 @@ const createPost = asyncHandler(async (req,res)=>{
     await user.save({ validateBeforeSave: false })
     
     res.status(201)
-
     .json(new ApiResponse(201,newPost,"Post create successfully"))
 })
 
