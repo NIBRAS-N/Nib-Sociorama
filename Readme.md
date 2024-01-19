@@ -1,6 +1,8 @@
-# SocialMediaApp
+# Nib-Sociorama
 
 **Nib-Sociorama** is a platform where users can connect, share, and engage with each other through posts, comments, likes, and follows.
+
+-[ Model Link](https://app.eraser.io/workspace/zfwdSBDBMOYrpzcu1a4G)
 
 ## Features
 
