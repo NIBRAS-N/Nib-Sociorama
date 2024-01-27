@@ -95,8 +95,10 @@ const deletePost = asyncHandler(async(req,res)=>{
     const post = await Post.findById( req.params.id)
 
     if(!post) throw new ApiError(401,"Post id not matched");
+    const var1 = post.owner
+    const var2 = req?.user._id
 
-    if(post.owner.toString() !== req?.user._id.toString() ){
+    if(var1.toString() !== var2.toString() ){
         throw new ApiError(400,"Your are not allowed to delete this post");
     }
     // console.log("post ",post)
@@ -133,19 +135,19 @@ const getPostOfFollowing = asyncHandler(async (req,res)=>{
     
     
     const user = await User.findById(req?.user._id)
-
+    
     const posts = await Post.find({
         owner:{
             $in:user.following
         }
-    })
+    }).populate("owner likes comments.user")
     
     // same result will be this
     // const postOf = await Post.aggregate([{$match:{owner:{$in:user.following}}}])
     // console.log("lollollol",postOf)
 
-   
-    res.status(200).json(new ApiResponse(200,posts,"Getting all the post of my Following person"))
+    // console.log(posts.length)
+    res.status(200).json(new ApiResponse(200,posts.reverse(),"Getting all the post of my Following person"))
 })
 
 const upadateCaption = asyncHandler(async (req,res) =>{
@@ -266,7 +268,8 @@ const deleteComment = asyncHandler(async (req,res)=>{
                 let idx=-1
                 allComments?.forEach(async (item,index)=>{
                     const ownerOfComment = item.user;
-                    if(item._id.toString() === commentId){
+                    const cd=item._id
+                    if(cd.toString() === commentId){
                         idx=index;
                         deletedComment = post.comments[index];
                         return await post.comments.splice(index,1);

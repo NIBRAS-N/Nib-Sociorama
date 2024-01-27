@@ -5,6 +5,8 @@ import { Provider } from 'react-redux'
 import store from './store.js'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
 import Login from './components/Login/Login.jsx'
+import {Home} from './components/index.js'
+import { AuthLayout } from './components/index.js'
 
 const router = createBrowserRouter([
   {
@@ -13,7 +15,21 @@ const router = createBrowserRouter([
     children:[
       {
         path:"/",
-        element: <Login/>,
+        element:(
+          <AuthLayout >
+            <Home/>
+          </AuthLayout>
+        )
+      },
+      {
+        path:"/login",
+        element: (
+          // authentication ={false} tokhon e pathabo jokhon amar check kora dorkar je user logged in naki na
+          <AuthLayout authentication= {false}>
+            <Login/>
+
+          </AuthLayout>
+        )
       }
     ]
   }

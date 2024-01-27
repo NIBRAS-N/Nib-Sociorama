@@ -209,12 +209,26 @@ const updatePassword = asyncHandler(async (req,res)=>{
 const updateProfile = asyncHandler(async (req,res) =>{
     const {name,email} = req.body;
 
+    const abc=req?.user.name;
+    const cd = req?.user.email;
     if(!name && !email) throw new ApiError(400,"Name and email field must be completed")
 
-    if(req.user.name === name.toLowerCase() && req.user.email === email) throw new ApiError(400,"old username or email")
+    // if(abc.toLowerCase() === name.toLowerCase() && cd.toLowerCase() === email) throw new ApiError(400,"old username or email")
 
     if(name) req.user.name= name.toLowerCase()
     if(email) req.user.email = email
+    // avatar:{public_id:avatar.public_id , url:avatar.url}
+    let avatarUpdateLocalPath = req?.file?.path
+    // console.log(avatarUpdateLocalPath)
+    if(avatarUpdateLocalPath) { 
+        const uploadAvatar = await uploadOnCloudinary(avatarUpdateLocalPath)
+        if(!uploadAvatar) throw new ApiError(400,"something wrong on uploading the updating avatar in cloudinary");
+        else{
+            // console.log(uploadAvatar)
+             if(req?.user.avatar.public_id)req.user.avatar.public_id  = uploadAvatar?.public_id;
+             if(req?.user.avatar.url)req.user.avatar.url = uploadAvatar?.url;
+        }
+    }
 
     await req.user.save({ validateBeforeSave: false })
 
@@ -317,7 +331,9 @@ const myProfile = asyncHandler(async (req,res)=>{
 })
 
 const getUserProfile = asyncHandler(async (req,res) =>{
-    const user = await User.findById(req?.params.id).populate("posts").populate("followers").populate("following")
+    // console.log(typeof(req.params.id))
+    const var1 = req.params.id;
+    const user = await User.findById(var1).populate("posts followers following")
     if(!user) throw new ApiError(400,"User id not found")
     return res.status(200).json(new ApiResponse(200,user,`All details of ${user.name} fetched`))
 })
@@ -325,7 +341,7 @@ const getUserProfile = asyncHandler(async (req,res) =>{
 const getAllUser = asyncHandler(async (req,res) =>{
     const user = await User.find({}).populate("posts").populate("followers").populate("following")
     if(!user) throw new ApiError(400,"User id not found")
-    return res.status(200).json(new ApiResponse(200,user,`All details of ${user.name} fetched`))
+    return res.status(200).json(new ApiResponse(200,user,`All details of users fetched`))
 })
 
 const forgotPassword = asyncHandler(async (req,res)=>{
@@ -333,7 +349,7 @@ const forgotPassword = asyncHandler(async (req,res)=>{
     if(!email) throw new ApiError(400,"Enter a email")
 
     const user = await User.findOne({email:email})
-    console.log(email," ",user)
+    // console.log(email," ",user)
     if(!user) throw new ApiError(400,"no user found with this email")
 
     const resetPasswordToken = await user.getResetPasswordToken();
@@ -395,4 +411,41 @@ const resetPassword = asyncHandler(async (req,res)=>{
     }
 
 })
-export {userRegister,userLogin,followUser,logout,updatePassword,updateProfile,deleteUser,myProfile,getAllUser,getUserProfile,forgotPassword,resetPassword}   
+
+
+const getMyPosts = asyncHandler(async(req,res)=>{
+    // console.log(typeof(req?.user._id))
+    // const user = await User.findById(req?.user._id)
+    const user = await User.findById(req?.user._id);
+    // console.log(user)   
+    if(!user) throw new ApiError(400,"User not found");
+
+    const posts = [];
+
+    for (let i = 0; i < user.posts.length; i++) {
+        const post = await Post.findById(user.posts[i]).populate(
+          "likes comments.user owner"
+        );
+        if(!post)throw new ApiError("something went wrong finding the post in the Post model");
+        posts.push(post);
+    }
+    res.status(200).json(new ApiResponse(200,posts,"all of my posts are fetched"));
+})
+
+const getUserPosts = asyncHandler(async(req,res)=>{
+    const user = await User.findById(req.params.id);
+
+    if(!user) throw new ApiError(400,"invalid user Id")
+
+    const posts = [];
+
+    for (let i = 0; i < user.posts.length; i++) {
+      const post = await Post.findById(user.posts[i]).populate(
+        "likes comments.user owner"
+      );
+      posts.push(post);
+    }
+
+    res.status(200).json(new ApiResponse(200,posts,"Posts of the given users have beetn fetched"))
+})
+export {userRegister,userLogin,followUser,logout,updatePassword,updateProfile,deleteUser,myProfile,getAllUser,getUserProfile,forgotPassword,resetPassword,getMyPosts,getUserPosts}   

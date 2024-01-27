@@ -8,9 +8,9 @@ import { loginUser } from "../../Actions/user.action.js";
 
 // 
 function Login() {
-    const [email, setEmail] = useState("");
-    const [password, setPassword] = useState("");
-    const dispatch = useDispatch();
+    // const [email, setEmail] = useState("");
+    // const [password, setPassword] = useState("");
+    // const dispatch = useDispatch();
     // const alert = useAlert();
   
     // const { error } = useSelector((state) => state.user);
@@ -18,7 +18,7 @@ function Login() {
 
     const loginHandler = (e) => {
         e.preventDefault();
-    
+// loginUser() is an action creator function that returns another function (a thunk function) that takes dispatch as an argument.
         dispatch(loginUser(email, password));
     };
 
