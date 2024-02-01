@@ -7,4 +7,8 @@ import Post from "./components/Post/Post.jsx"
 import User from "./components/User/User.jsx";
 import CommentCard from "./components/CommentCard/CommentCard.jsx";
 import Account from "./components/Account/Account.jsx";
-export {Loader,AuthLayout,Login,Home,Header,Post,User,CommentCard,Account}
+import NewPost from "./components/NewPost/NewPost.jsx"
+import Register from "./components/Register/Register.jsx"
+import UpdateProfile from "./components/UpdateProfile/UpdateProfile.jsx"
+import UpdatePassword from "./components/UpdatePassword/UpdatePassword.jsx";
+export {Loader,AuthLayout,Login,Home,Header,Post,User,CommentCard,Account,NewPost,Register,UpdateProfile,UpdatePassword}

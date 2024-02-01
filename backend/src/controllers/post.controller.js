@@ -3,14 +3,14 @@ import { asyncHandler } from "../utils/asyncHandler.js";
 import { ApiError } from "../utils/ApiError.js";
 import { ApiResponse } from "../utils/ApiResponse.js";
 import { User } from "../models/user.model.js";
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary,deleteFromCLoudinary } from "../utils/cloudinary.js";
 const createPost = asyncHandler(async (req,res)=>{
     const {caption} = req.body;
-
+    // console.log(caption,image)
     const bannerLocalPath = req.file?.path;
 
     if(!bannerLocalPath) {
-        throw new ApiError(400, "banner file is required")
+        throw new ApiError(400, "image file is required")
     }
 
     const banner =  await uploadOnCloudinary(bannerLocalPath)
@@ -34,7 +34,7 @@ const createPost = asyncHandler(async (req,res)=>{
     
     // console.log(typeof(user.posts)," ",user.posts.length);
 
-    const addedPost = await user.posts.push(newPost?._id);
+    const addedPost = await user.posts.unshift(newPost?._id);
 
     
     // console.log(addedPost, " " , user);
@@ -55,7 +55,7 @@ const likeAndUnlikePost = asyncHandler(async(req,res)=>{
     // else in like array push the liker 
         // save post
     const post = await Post.findById(req.params.id);
-    console.log(post)
+    // console.log(post)
     if(!post) throw new ApiError(400,"Post id not found from params");
 
     if(post.likes.includes(req?.user._id)){
@@ -122,6 +122,10 @@ const deletePost = asyncHandler(async(req,res)=>{
     if(!userModelPostArrayDelete) throw new ApiError(400,"Post array from user model not deleted");
 
     await user.save({ validateBeforeSave: false })
+
+    const clodinaryDelete = await deleteFromCLoudinary(post?.image?.public_id)
+
+    if(!clodinaryDelete) throw new ApiError(400,"Image is not deleted from cloudinary")
 
     res.status(200).json(new ApiResponse(200,user,"post deleted successful"))
 })

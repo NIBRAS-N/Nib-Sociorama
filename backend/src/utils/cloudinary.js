@@ -1,6 +1,7 @@
 import {v2 as cloudinary} from "cloudinary"
 import fs from "fs"
 import { asyncHandler } from "./asyncHandler.js";
+import { ApiError } from "./ApiError.js";
 
 const connectCloudinary = async()=>{
     try {
@@ -41,6 +42,15 @@ const uploadOnCloudinary = async (localFilePath) => {
     }
 }
 
+const deleteFromCLoudinary = async(id)=>{
+    try {
+        if(!id) {throw new ApiError(400,"Cloudinary image id not found");}
+        const response = await cloudinary.uploader.destroy(id);
+        return response;
+    } catch (error) {
+        console.log("error in || src || utils || cloudinary || delete || catch", error);
+        return null;
+    }
+}
 
-
-export {uploadOnCloudinary}
+export {uploadOnCloudinary,deleteFromCLoudinary}

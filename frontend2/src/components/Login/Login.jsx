@@ -4,7 +4,7 @@ import { Typography, Button } from "@mui/material";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { loginUser } from "../../Actions/user.actions.js";
-
+import { useNavigate } from "react-router-dom";
 // import { useAlert } from "react-alert";
 
 // 
@@ -13,7 +13,7 @@ function Login() {
     const [password, setPassword] = useState("");
     const dispatch = useDispatch();
     // const alert = useAlert();
-  
+    const navigate = useNavigate()
     const { error } = useSelector((state) => state.user);
     // const { message } = useSelector((state) => state.like);
 
@@ -21,6 +21,7 @@ function Login() {
         e.preventDefault();
 // loginUser() is an action creator function that returns another function (a thunk function) that takes dispatch as an argument.
         dispatch(loginUser(email, password));
+        navigate("/")
     };
 
   return (

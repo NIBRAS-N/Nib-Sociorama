@@ -10,8 +10,8 @@ import {
 import "./Post.css";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
-import { likePost,addCommentOnPost } from "../../Actions/post.actions.js";
-import {getFollowingPosts} from "../../Actions/user.actions.js"
+import { likePost,addCommentOnPost,updatePost,deletePost } from "../../Actions/post.actions.js";
+import {getFollowingPosts,getMyPosts,loadUser} from "../../Actions/user.actions.js"
 import {User,CommentCard} from "../../index.js"
 
 const Post = ({
@@ -31,8 +31,8 @@ const Post = ({
     const [likesUser, setLikesUser] = useState(false);
     const [commentValue, setCommentValue] = useState("");
     const [commentToggle, setCommentToggle] = useState(false);
-  // const [captionValue, setCaptionValue] = useState(caption);
-  // const [captionToggle, setCaptionToggle] = useState(false);
+    const [captionValue, setCaptionValue] = useState(caption);
+    const [captionToggle, setCaptionToggle] = useState(false);
 
 
     
@@ -62,6 +62,17 @@ const Post = ({
         }
     };
 
+    const updateCaptionHandler = async(e) => {
+      e.preventDefault();
+      await dispatch(updatePost(captionValue, postId));
+      await dispatch(getMyPosts());
+    };
+  
+    const deletePostHandler = async () => {
+      await dispatch(deletePost(postId));
+      await dispatch(getMyPosts());
+      await dispatch(loadUser());
+    };
     useEffect(() => {
         likes.forEach((item) => {
             if (item._id === user._id) {
@@ -77,7 +88,7 @@ const Post = ({
         {isAccount ? (
            
           <Button 
-            // onClick={() => setCaptionToggle(!captionToggle)}
+            onClick={() => setCaptionToggle(!captionToggle)}
           >
             <MoreVert />
           </Button>
@@ -137,7 +148,7 @@ const Post = ({
 
         {isDelete ? (
           <Button 
-            // onClick={deletePostHandler}
+            onClick={deletePostHandler}
           >
             <DeleteOutline />
           </Button>
@@ -186,7 +197,7 @@ const Post = ({
           </form>
 
           {comments.length > 0 ? (
-            comments.map(async(item) => (
+            comments.map((item) => (
               <CommentCard
                 userId={item?.user?._id}
                 name={item?.user?.name}
@@ -203,7 +214,7 @@ const Post = ({
           )}
         </div>
       </Dialog>
-    {/*
+    
       <Dialog
         open={captionToggle}
         onClose={() => setCaptionToggle(!captionToggle)}
@@ -225,7 +236,7 @@ const Post = ({
             </Button>
           </form>
         </div>
-      </Dialog> */}
+      </Dialog>
     </div>
   );
 }

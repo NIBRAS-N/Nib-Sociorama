@@ -4,7 +4,7 @@ import {useNavigate} from 'react-router-dom'
 // import { loadUser } from "../Actions/user.action"
 import {Loader,Login} from "../index.js"
 
-export default function Protected({children,authentication=true}){
+export default function Protected({children,authentication=true,newUser=false}){
     const navigate = useNavigate()
     const dispatch = useDispatch();
     const [loader, setLoader] = useState(true)
@@ -34,5 +34,5 @@ export default function Protected({children,authentication=true}){
     }, [isAuthenticated,authentication]);
 
 
-    return loader && !checkAuth ? <Login/> : <>{children}</>
+    return loader && !checkAuth && !newUser ? <Login/> : <>{children}</>
 }

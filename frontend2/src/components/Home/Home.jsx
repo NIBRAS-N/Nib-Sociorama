@@ -17,11 +17,7 @@ import {clearErrorsLikeSlice,clearMessage} from "../../Slices/likeSlice.js"
     // console.log(posts[0]._id)
     // console.log("loading ",loading," posts ",posts)
 
-  const { users,
-    loading: usersLoading 
-  } =  useSelector(
-    (state) => state.allUsers
-  );
+  const { users, loading: usersLoading } =  useSelector( (state) => state.allUsers);
     // console.log("loading ",usersLoading," posts ",users)
 
 

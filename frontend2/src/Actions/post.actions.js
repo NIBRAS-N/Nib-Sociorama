@@ -109,4 +109,79 @@ const deleteCommentOnPost = (id, commentId) => async (dispatch) => {
   }
 };
 
-export {likePost , addCommentOnPost,deleteCommentOnPost}
+
+const createNewPost = (caption, image) => async (dispatch) => {
+  try {
+    
+
+
+    dispatch(newPostRequest());
+
+    const response = await axios.post(
+      `/api/v1/post/upload`,
+      {
+        caption,
+        image
+      },
+      {
+        headers: {
+          'Content-Type': 'multipart/form-data',
+        },
+      }
+    );
+    dispatch(newPostSuccess(response?.data?.message));
+    
+      
+    
+  } catch (error) {
+    dispatch(newPostFailure(error?.message));
+  }
+};
+
+const updatePost = (newCaption, id) => async (dispatch) => {
+  try {
+    dispatch(updateCaptionRequest());
+
+    const response = await axios.put(
+      `/api/v1/post/${id}`,
+      {
+        newCaption
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+    dispatch(updateCaptionSuccess(response?.data?.message));
+  } catch (error) {
+    dispatch(updateCaptionFailure(error?.message));
+  }
+};
+
+const deletePost = (id) => async (dispatch) => {
+  try {
+    dispatch(deletePostRequest());
+
+    const response = await axios.delete(`/api/v1/post/${id}`);
+    dispatch(deletePostSuccess(response?.data?.message));
+    Swal.fire({
+      position: "bottom",
+      icon: "success",
+      title: ` Post deleted successfully ` ,
+      showConfirmButton: false,
+      timer: 2000
+    });
+  } catch (error) {
+    dispatch(deletePostFailure(error?.message));
+    Swal.fire({
+      position: "bottom",
+      icon: "warning",
+      title: ` something wrong while deleting your post` ,
+      showConfirmButton: false,
+      timer: 2000
+    });
+  }
+};
+
+export {likePost , addCommentOnPost,deleteCommentOnPost , createNewPost , updatePost , deletePost}

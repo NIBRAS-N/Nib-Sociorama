@@ -5,7 +5,7 @@ import { ApiResponse } from "../utils/ApiResponse.js";
 import { Post } from "../models/post.model.js";
 import { sendEmail } from "../middlewares/sendEmail.middleware.js";
 import crypto from "crypto"
-import { uploadOnCloudinary } from "../utils/cloudinary.js";
+import { uploadOnCloudinary , deleteFromCLoudinary } from "../utils/cloudinary.js";
 
 const generateToken = async(userId) =>{
     try {
@@ -24,7 +24,7 @@ const generateToken = async(userId) =>{
 
 const userRegister = asyncHandler( async (req,res)=>{
     const {email,name,password} = req.body;
-
+    // console.log(name)
     if([email,name,password].some((item)=>item?.trim()==="")){
         throw new ApiError(400,"all fields are required");
     }
@@ -37,9 +37,13 @@ const userRegister = asyncHandler( async (req,res)=>{
     }
     )
     if(existedUser) throw new ApiError(409, "User with email or username already exists")
+    // if(existedUser) {
+    //     return res.status(400).json(new ApiResponse(400,{},"User with email or username already exists")
+    // )
+    // }
 
     const avatarLocalPath = req.file?.path;
-
+    console.log(avatarLocalPath)
     // console.log("req.files ", req.file);
 
     if(!avatarLocalPath) {
@@ -113,7 +117,7 @@ const userLogin = asyncHandler( async (req,res) => {
 
     const token = await generateToken(user?._id);
     // console.log("niche",token)
-    const loggedInUser = await User.findById(user?._id).select("-password")
+    const loggedInUser = await User.findById(user?._id).select("-password").populate("posts followers following")
 
     const options = {
         expires: new Date(Date.now()+90*24*60*1000),
@@ -184,12 +188,13 @@ const followUser = asyncHandler(async (req,res)=>{
 })
 
 const logout = asyncHandler(async(req,res)=>{
+    const user = await User.findById(req?.user._id);
     const options = {
         expires: new Date(Date.now()),
         httpOnly: true,
         secure: true
     }
-    res.cookie("accessToken",null,options).status(200).json(new ApiResponse(200,{},"User logged Out successfully"))
+    res.cookie("accessToken",null,options).status(200).json(new ApiResponse(200,{user},"User logged Out successfully"))
 })
 
 const updatePassword = asyncHandler(async (req,res)=>{
@@ -197,7 +202,8 @@ const updatePassword = asyncHandler(async (req,res)=>{
     const user = await User.findById(req?.user._id);
     const checking = await user.isPasswordCorrect(oldPassword)
     if(!checking){
-        res.status(400).json(new ApiResponse(400,user,"Old password is not correct"))
+        throw new ApiError(400,"Old Password is not correct")
+        // res.status(400).json(new ApiResponse(400,user,"Old password is not correct"))
     }
     else{
         user.password = newPassword
@@ -221,6 +227,9 @@ const updateProfile = asyncHandler(async (req,res) =>{
     let avatarUpdateLocalPath = req?.file?.path
     // console.log(avatarUpdateLocalPath)
     if(avatarUpdateLocalPath) { 
+
+        const cloudinaryRemove = await deleteFromCLoudinary(req?.user.avatar.public_id)
+        if(cloudinaryRemove) console.log("prev photo deleted from cloudinary")
         const uploadAvatar = await uploadOnCloudinary(avatarUpdateLocalPath)
         if(!uploadAvatar) throw new ApiError(400,"something wrong on uploading the updating avatar in cloudinary");
         else{
@@ -232,67 +241,140 @@ const updateProfile = asyncHandler(async (req,res) =>{
 
     await req.user.save({ validateBeforeSave: false })
 
-    res.status(200).json(new ApiResponse(200,req.user,"Updated successfully"))
+    res.status(200).json(new ApiResponse(200,req?.user,"Updated successful"))
 })
 
 const deleteUser = asyncHandler(async (req,res)=>{
     const user = await User.findById(req?.user._id)
     
+    // console.log("post length",user.posts.length)
+    const allPosts  = user?.posts;
+    const total_posts = await Post.find({})
+    
+    
+    
 
-    const allPosts  = user.posts;
     // deleting all post of the current user
-    allPosts?.map(async(item)=>{
-        const post = await Post.findById(item)
-        // console.log("item",post)
-        const deleting = await Post.deleteOne(item);
-        if(!deleting) throw new ApiError(400,"something went wrong during deleting the post")
-    })
+
+    // allPosts && allPosts?.map(async(item)=>{
+    //     const post = await Post.findById(item)
+    //     // console.log("item",post)
+    //     const deleting = await Post.deleteOne(item);
+    //     if(!deleting) throw new ApiError(400,"something went wrong during deleting the post")
+    //     await post.save({ validateBeforeSave: false });
+    // })
+
+    for (let i = 0; i < allPosts?.length; i++) {
+        // console.log(allPosts[i])
+        const post = await Post.findById(allPosts[i]);
+        const resu=await deleteFromCLoudinary(post?.image?.public_id)
+        if(resu) console.log("post pic cloudinary deletion update ", resu)
+        // await post.remove();
+        const delFromUSerPostArray = allPosts.splice(i,1)
+        await user.save({validateBeforeSave:false})
+        const delPost = await Post.deleteOne(post?._id)
+        if(!delPost) throw new ApiError(400,"post id not found while deleting")
+    }
 
     // deleting the follwing persons followers array[user er following array te je id ase, oy id er following array thekew remove kora lagbe]
 
     const fol_lowing= user?.following;
     
-    fol_lowing?.map(async(item)=>{
-        const user2 = await User.findOne(item);
-        if(!user2)throw new ApiError(400,"something went wrong during finding my following person")
+    // fol_lowing && fol_lowing?.map(async(item)=>{
+    //     const user2 = await User.findOne(item);
+    //     if(!user2)throw new ApiError(400,"something went wrong during finding my following person")
 
-        const followerOfUser2 = user2.followers; 
+    //     const followerOfUser2 = user2.followers; 
 
-        const index = followerOfUser2.indexOf(item)
-        const deleteFollowing = await followerOfUser2.splice(index,1)
+    //     const index = followerOfUser2.indexOf(item)
+    //     const deleteFollowing = await followerOfUser2.splice(index,1)
 
-        if(!deleteFollowing)ApiError(400,"something went wrong during deleting from followers array")
+    //     if(!deleteFollowing)ApiError(400,"something went wrong during deleting from followers array")
 
-        await user2.save({ validateBeforeSave: false });
-        // console.log(followerOfUser2);
-        // console.log(user2," ",user2.followers);
-    })
+    //     await user2.save({ validateBeforeSave: false });
+    //     // console.log(followerOfUser2);
+    //     // console.log(user2," ",user2.followers);
+    // })
+
+    for (let i = 0; i < fol_lowing.length; i++) {
+        const follows = await User.findById(fol_lowing[i]);
+  
+        const index = follows.followers.indexOf(req?.user?._id);
+        follows.followers.splice(index, 1);
+        await follows.save({validateBeforeSave:false});
+      }
 
     // deleting the follwer persons followings array[user er following array te je id ase, oy id er following array thekew remove kora lagbe]
 
     const fol_lower= user?.followers;
     
-    fol_lower?.map(async(item)=>{
-        const user2 = await User.findOne(item);
-        if(!user2)throw new ApiError(400,"something went wrong during finding my follower person")
+    // fol_lower && fol_lower?.map(async(item)=>{
+    //     const user2 = await User.findOne(item);
+    //     if(!user2)throw new ApiError(400,"something went wrong during finding my follower person")
 
-        const followingOfUser2 = user2.following; 
+    //     const followingOfUser2 = user2.following; 
 
-        const index = followingOfUser2.indexOf(item)
-        const deleteFollower = await followingOfUser2.splice(index,1)
+    //     const index = followingOfUser2.indexOf(item)
+    //     const deleteFollower = await followingOfUser2.splice(index,1)
 
-        if(!deleteFollower)ApiError(400,"something went wrong during deleting from following array")
+    //     if(!deleteFollower)ApiError(400,"something went wrong during deleting from following array")
 
-        await user2.save({ validateBeforeSave: false });
-        // console.log(followerOfUser2);
-        // console.log(user2," ",user2.followers);
-    })
+    //     await user2.save({ validateBeforeSave: false });
+    //     // console.log(followerOfUser2);
+    //     // console.log(user2," ",user2.followers);
+    // })
 
+    for (let i = 0; i < fol_lower.length; i++) {
+        const follower = await User.findById(fol_lower[i]);
+  
+        const index = follower.following.indexOf(req?.user?._id);
+        follower.following.splice(index, 1);
+        await follower.save({validateBeforeSave:false});
+      }
+
+    //deleting the likes of the user
+    
+    console.log(total_posts.length)
+    for (let i = 0; i < total_posts?.length; i++) {
+        const post = await Post.findById(total_posts[i]?._id);
+  
+        for (let j = 0; j < post?.likes?.length; j++) {
+            // console.log(post.likes[j]," ",req?.user._id)
+            const var1 = post.likes[j]
+            const var2 = req?.user?._id
+          if (var1.toString() === var2.toString()) {
+            // console.log("lollollol")
+            post.likes.splice(j, 1);
+          }
+        }
+        await post.save({ validateBeforeSave: false });
+      }
+
+      // Deleting all the comments of the user
+
+      for (let i = 0; i < total_posts?.length; i++) {
+        const post = await Post.findById(total_posts[i]._id);
+  
+        for (let j = 0; j < post?.comments?.length; j++) {
+            const var1 = post.comments[j].user
+            const var2 = req?.user?._id
+          if (var1.toString() === var2.toString()) {
+            post.comments.splice(j, 1);
+          }
+        }
+        await post.save({ validateBeforeSave: false });
+      }
     //  deleting the user
 
     const removing = await User.deleteOne(user?._id);
     if(!removing) throw new ApiError(400,"something went wrong during deleting the Uer")
+    //   console.log("removing ",removing)
 
+    const result=await deleteFromCLoudinary(user?.avatar?.public_id)
+    if(result) console.log("User avatar cloudinary deletion update",result)
+
+    //   await user.remove();
+    // user.save({validateBeforeSave:false})
 
     const options = {
         expires: new Date(Date.now()),
