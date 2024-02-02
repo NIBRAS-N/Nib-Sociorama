@@ -162,14 +162,11 @@ const followUser = asyncHandler(async (req,res)=>{
         const deleteExistedFollower = userTofollow.followers.splice(index2,1)
         await loggedinUser.save({ validateBeforeSave: false })
         await userTofollow.save({ validateBeforeSave: false })
-        res.status(200).json(new ApiResponse(200,{userTofollow,loggedinUser},"Unfollow done"))
+        res.status(200).json(new ApiResponse(200,{userTofollow,loggedinUser},`Unfollow  ${userTofollow?.name}done`))
     } 
 
     else{
 
-        
-
-        console.log()
         
         const insertInFollowingArray = await loggedinUser.following.push(req.params.id);
 
@@ -182,7 +179,7 @@ const followUser = asyncHandler(async (req,res)=>{
         await loggedinUser.save({ validateBeforeSave: false })
         await userTofollow.save({ validateBeforeSave: false })
 
-        res.status(200).json(new ApiResponse(200,{userTofollow,loggedinUser},"Following successfully done"))
+        res.status(200).json(new ApiResponse(200,{userTofollow,loggedinUser},`Following ${userTofollow?.name}successfully done"`))
     }
 
 })
@@ -440,7 +437,8 @@ const forgotPassword = asyncHandler(async (req,res)=>{
 
     if(!saving) throw new ApiError(400,"something wrong creating reset Password token")
 
-    const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/password/reset/${resetPasswordToken}`
+    // const resetUrl = `${req.protocol}://${req.get("host")}/api/v1/password/reset/${resetPasswordToken}`
+    const resetUrl = `${req.protocol}://${req.get("host")}/password/reset/${resetPasswordToken}`
 
     const message = `Reset Your password by clicking on the link below : \n\n ${resetUrl} `
 
@@ -451,7 +449,7 @@ const forgotPassword = asyncHandler(async (req,res)=>{
             subject:"Reset Password", 
             message
         })
-        res.status(200).json(new ApiResponse(200,email,"email successfully sent"))
+        res.status(200).json(new ApiResponse(200,email,`email successfully sent to ${email}`))
     } catch (error) {
         user.resetPasswordToken = undefined
         user.resetPasswordExpire = undefined

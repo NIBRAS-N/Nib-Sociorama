@@ -71,7 +71,7 @@ import {clearErrorsLikeSlice,clearMessage} from "../../Slices/likeSlice.js"
   ) : (
     <div className="home">
       <div className="homeleft">
-        <h1>Posts will be shown here</h1>
+        {/* <h1>Posts will be shown here</h1> */}
         {posts && posts.length > 0 ? (
           posts.map((post) => (
             <Post
@@ -91,7 +91,7 @@ import {clearErrorsLikeSlice,clearMessage} from "../../Slices/likeSlice.js"
         )}
       </div>
       <div className="homeright">
-        <h1>User will be shown here</h1>
+        {/* <h1>User will be shown here</h1> */}
         {users && users?.length > 0 ? (
           users.map((user) => (
             <User

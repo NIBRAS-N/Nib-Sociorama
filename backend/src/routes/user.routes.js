@@ -22,7 +22,7 @@ router.route("/:id").get(verifyJWT,getUserProfile)
 router.route("/my/posts").get(verifyJWT,getMyPosts)
 router.route("/userposts/:id").get(verifyJWT , getUserPosts);
 router.route("/forgot/password").post(forgotPassword)
-router.route("/password/reset/:token").post(resetPassword)
+router.route("/password/reset/:token").put(resetPassword)
 
 
 export default router;

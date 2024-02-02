@@ -15,3 +15,11 @@
 - **Liking:** Users can express their appreciation for posts by liking them.
 
 - **Follow/Unfollow:** Users can follow/unfollow other users to see their posts in their feed.
+
+# Project Demo:
+- ### Initial UI/UX
+<img src="Capture 1.PNG">
+<img src="Capture 2.PNG">
+<img src="Capture 3.PNG">
+<img src="Capture 4.PNG">
+<img src="Capture 5.PNG">

@@ -38,8 +38,29 @@ import {
     updatePasswordFailure,
     deleteProfileRequest,
     deleteProfileSuccess,
-    deleteProfileFailure
+    deleteProfileFailure,
+    forgotPasswordRequest,
+    forgotPasswordSuccess,
+    forgotPasswordFailure,
+    resetPasswordRequest,
+    resetPasswordSuccess,
+    resetPasswordFailure,
+    followUserRequest,
+    followUserSuccess,
+    followUserFailure,
 } from "../Slices/likeSlice.js"
+
+import {
+  userPostsRequest,
+  userPostsSuccess,
+  userPostsFailure
+} from "../Slices/userPostSlice.js"
+
+import {
+  userProfileRequest,
+  userProfileSuccess,
+  userProfileFailure
+} from "../Slices/userProfileSlice.js"
 
 const loginUser = (email,password) => async(dispatch) =>{
         try {
@@ -318,4 +339,131 @@ const deleteMyProfile = () => async (dispatch) => {
     });
   }
 };
-export {loadUser,loginUser,getFollowingPosts,getAllUsers,getMyPosts,logoutUser,registerUser,updateProfile,updatePassword,deleteMyProfile}
+
+const forgotPassword = (email) => async (dispatch) => {
+  try {
+    await dispatch(forgotPasswordRequest());
+
+    const response = await axios.post(
+      "/api/v1/user/forgot/password",
+      {
+        email,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    await dispatch(forgotPasswordSuccess(response?.data?.message));
+    Swal.fire({
+      position: "top-end",
+      icon: "success",
+      title: `reset token sent  successfully ${response?.data?.message}` ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+  } catch (error) {
+    await dispatch(forgotPasswordFailure(error?.message))
+    Swal.fire({
+      position: "top-end",
+      icon: "warning",
+      title: `wrong on sending reset token , ${error}`  ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+  }
+};
+
+const resetPassword = (token, password) => async (dispatch) => {
+  try {
+    await dispatch(resetPasswordRequest());
+
+    const response = await axios.put(
+      `/api/v1/user/password/reset/${token}`,
+      {
+        password,
+      },
+      {
+        headers: {
+          "Content-Type": "application/json",
+        },
+      }
+    );
+
+    await dispatch(resetPasswordSuccess(response?.data?.message))
+  } catch (error) {
+    Swal.fire({
+      position: "top-end",
+      icon: "warning",
+      title: `wrong on reset Password , ${error}`  ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+    await dispatch(resetPasswordFailure(error?.message));
+  }
+};
+
+const getUserPosts = (id) => async (dispatch) => {
+  try {
+    await dispatch(userPostsRequest());
+
+    const response = await axios.get(`/api/v1/user/userposts/${id}`);
+    await dispatch(userPostsSuccess(response?.data?.data));
+  } catch (error) {
+    Swal.fire({
+      position: "bottom",
+      icon: "warning",
+      title: `wrong on getting user posts , ${error}`  ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+    await dispatch(userPostsFailure(error?.message));
+  }
+};
+
+const getUserProfile = (id) => async (dispatch) => {
+  try {
+    await dispatch(userProfileRequest());
+
+    const response = await axios.get(`/api/v1/user/${id}`);
+    await dispatch(userProfileSuccess(response?.data?.data))
+  } catch (error) {
+    Swal.fire({
+      position: "bottom",
+      icon: "warning",
+      title: `wrong on getting user profile , ${error}`  ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+    await dispatch(userProfileFailure(error?.message));
+  }
+};
+
+const followAndUnfollowUser = (id) => async (dispatch) => {
+  try {
+    await dispatch(followUserRequest());
+
+    const response = await axios.get(`/api/v1/user/follow/${id}`);
+    await dispatch(followUserSuccess(response?.data?.message));
+    Swal.fire({
+      position: "bottom",
+      icon: "success",
+      title: ` ${response?.data?.message}`  ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+  } catch (error) {
+    Swal.fire({
+      position: "bottom",
+      icon: "warning",
+      title: `wrong on follow or unfollow , ${error}`  ,
+      showConfirmButton: false,
+      timer: 3000
+    });
+    await dispatch(followUserFailure(error?.message));
+
+  }
+};
+export {loadUser,loginUser,getFollowingPosts,getAllUsers,getMyPosts,logoutUser,registerUser,updateProfile,updatePassword,deleteMyProfile,forgotPassword , resetPassword , getUserPosts , getUserProfile , followAndUnfollowUser}

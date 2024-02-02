@@ -7,8 +7,8 @@ import "./Account.css";
 import Swal from 'sweetalert2';
 import {getMyPosts,logoutUser,deleteMyProfile, loadUser} from "../../Actions/user.actions.js"
 import {clearErrorsMyPostSlice} from "../../Slices/myPostSlice.js"
-import {clearErrorsLikeSlice} from "../../Slices/likeSlice.js"
-import { clearMessage } from "../../Slices/likeSlice.js";
+import {clearErrorsLikeSlice,clearMessage} from "../../Slices/likeSlice.js"
+
 import {useNavigate} from 'react-router-dom'
 
 
@@ -42,14 +42,14 @@ const Account = () => {
 
     useEffect(() => {
         if (error) {
+          Swal.fire({
+              position: "bottom",
+              icon: "warning",
+              title: `${error}`,
+              showConfirmButton: false,
+              timer: 2000
+          });
             dispatch(clearErrorsMyPostSlice());
-            Swal.fire({
-                position: "bottom",
-                icon: "warning",
-                title: `${error}`,
-                showConfirmButton: false,
-                timer: 2000
-            });
         }
     
         if (likeError) {
@@ -68,7 +68,7 @@ const Account = () => {
 
             Swal.fire({
               position: "bottom",
-              icon: "warning",
+              icon: "success",
               title: `${message}`,
               showConfirmButton: false,
               timer: 2000
