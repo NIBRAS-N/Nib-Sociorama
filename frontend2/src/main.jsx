@@ -4,7 +4,7 @@ import App from './App.jsx'
 import { Provider } from 'react-redux'
 import store from './store.js'
 import { RouterProvider, createBrowserRouter } from 'react-router-dom'
-import {Login,Home,AuthLayout,Account,NewPost,Register,UpdateProfile,UpdatePassword,ForgotPassword,ResetPassword,UserProfile} from './index.js'
+import {Login,Home,AuthLayout,Account,NewPost,Register,UpdateProfile,UpdatePassword,ForgotPassword,ResetPassword,UserProfile , Search , NotFound} from './index.js'
 
 
 
@@ -108,6 +108,26 @@ const router = createBrowserRouter([
           
           <AuthLayout >
             <UserProfile/>
+
+          </AuthLayout>
+        )
+      },
+      {
+        path:"/search",
+        element: (
+          
+          <AuthLayout >
+            <Search/>
+
+          </AuthLayout>
+        )
+      },
+      {
+        path:"*",
+        element: (
+          
+          <AuthLayout newUser={true} >
+            <NotFound/>
 
           </AuthLayout>
         )

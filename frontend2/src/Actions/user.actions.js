@@ -151,17 +151,28 @@ const getFollowingPosts = () => async (dispatch) => {
 
 // name = ""
   
-const getAllUsers = () => async (dispatch) => {
+const getAllUsers = (name="",search=false) => async (dispatch) => {
     try {
       // console.log("lol")
       await dispatch(allUsersRequest())
 
       // const response = await axios.get(`/api/v1/users?name=${name}`);
 
-      const response = await axios.post("/api/v1/user/all-users",{},{headers:{
+      const response = await axios.post(`/api/v1/user/all-users?name=${name}`,{},{headers:{
         "Content-Type":"application/json"
       }});
+      
+
       await dispatch(allUsersSuccess(response?.data?.data));
+      if(search)
+      {      Swal.fire({
+              position: "top-end",
+              icon: "success",
+              title: ` ${response.data?.data?.length} User found` ,
+              showConfirmButton: false,
+              timer: 2000
+            });
+      }
     } catch (error) {
       
       dispatch(allUsersFailure(error?.message));

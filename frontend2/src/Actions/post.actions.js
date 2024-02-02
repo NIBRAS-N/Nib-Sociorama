@@ -100,12 +100,26 @@ const deleteCommentOnPost = (id, commentId) => async (dispatch) => {
     await dispatch(deleteCommentRequest());
 
     const response = await axios.delete(`/api/v1/post/comment/${id}`, {
-      commentId
+      data:{commentId}
     });
     
     await dispatch(deleteCommentSuccess(response?.data?.message))
+    Swal.fire({
+      position: "bottom",
+      icon: "success",
+      title: ` comment has been deleted` ,
+      showConfirmButton: false,
+      timer: 2000
+    });
   } catch (error) {
     await dispatch(deleteCommentFailure(error?.message));
+    Swal.fire({
+      position: "bottom",
+      icon: "warning",
+      title: `${error?.message}` ,
+      showConfirmButton: false,
+      timer: 2000
+    });
   }
 };
 

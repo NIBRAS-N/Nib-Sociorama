@@ -126,6 +126,8 @@ const UserProfile = () => {
               ownerImage={post?.owner?.avatar?.url}
               ownerName={post?.owner?.name}
               ownerId={post?.owner?._id}
+              userProfile={true}
+              userId2={user?._id}
             />
           ))
         ) : (

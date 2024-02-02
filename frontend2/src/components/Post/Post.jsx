@@ -11,7 +11,7 @@ import "./Post.css";
 import { Link } from "react-router-dom";
 import { useDispatch, useSelector } from "react-redux";
 import { likePost,addCommentOnPost,updatePost,deletePost } from "../../Actions/post.actions.js";
-import {getFollowingPosts,getMyPosts,loadUser} from "../../Actions/user.actions.js"
+import {getFollowingPosts,getMyPosts,loadUser,getUserPosts} from "../../Actions/user.actions.js"
 import {User,CommentCard} from "../../index.js"
 
 const Post = ({
@@ -25,8 +25,10 @@ const Post = ({
     ownerId,
     isDelete = false,
     isAccount = false,
+    userProfile = false,
+    userId2=""
   }) => {
-    
+    // console.log(userId2);
     const [liked, setLiked] = useState(false);
     const [likesUser, setLikesUser] = useState(false);
     const [commentValue, setCommentValue] = useState("");
@@ -46,7 +48,11 @@ const Post = ({
 
         if (isAccount) {
             await  dispatch(getMyPosts());
-        } else {
+        } 
+        else if(userProfile){
+          await dispatch(getUserPosts(userId))
+        }
+        else {
             await dispatch(getFollowingPosts());
         }
     };
@@ -57,7 +63,11 @@ const Post = ({
 
         if (isAccount) {
         dispatch(getMyPosts());
-        } else {
+        }
+        else if(userProfile){
+          await dispatch(getUserPosts(userId2))
+        }
+         else {
         dispatch(getFollowingPosts());
         }
     };
@@ -207,6 +217,8 @@ const Post = ({
                 key={item?._id}
                 postId={postId}
                 isAccount={isAccount}
+                userProfile={userProfile}
+                userId2={userId2}
               />
             ))
           ) : (

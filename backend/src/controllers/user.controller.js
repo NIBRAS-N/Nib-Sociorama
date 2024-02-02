@@ -418,7 +418,9 @@ const getUserProfile = asyncHandler(async (req,res) =>{
 })
 
 const getAllUser = asyncHandler(async (req,res) =>{
-    const user = await User.find({}).populate("posts").populate("followers").populate("following")
+    const user = await User.find({ 
+         name: { $regex: req.query.name, $options: "i" }
+    }).populate("posts").populate("followers").populate("following")
     if(!user) throw new ApiError(400,"User id not found")
     return res.status(200).json(new ApiResponse(200,user,`All details of users fetched`))
 })

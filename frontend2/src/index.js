@@ -14,4 +14,6 @@ import UpdatePassword from "./components/UpdatePassword/UpdatePassword.jsx";
 import ForgotPassword from "./components/ForgotPassword/ForgotPassword.jsx";
 import ResetPassword from "./components/ResetPassword/ResetPassword.jsx";
 import UserProfile from "./components/UserProfile/UserProfile.jsx";
-export {Loader,AuthLayout,Login,Home,Header,Post,User,CommentCard,Account,NewPost,Register,UpdateProfile,UpdatePassword,ForgotPassword,ResetPassword,UserProfile}
+import Search from "./components/Search/Search.jsx";
+import NotFound from "./components/NotFound/NotFound.jsx";
+export {Loader,AuthLayout,Login,Home,Header,Post,User,CommentCard,Account,NewPost,Register,UpdateProfile,UpdatePassword,ForgotPassword,ResetPassword,UserProfile,Search,NotFound}

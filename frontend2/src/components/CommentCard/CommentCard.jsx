@@ -5,7 +5,8 @@ import "./CommentCard.css";
 import { Delete } from "@mui/icons-material";
 import { useDispatch, useSelector } from "react-redux";
 import {deleteCommentOnPost} from "../../Actions/post.actions.js"
-import { getFollowingPosts } from "../../Actions/user.actions.js";
+import { getFollowingPosts , getMyPosts ,getUserPosts} from "../../Actions/user.actions.js";
+
 import Swal from 'sweetalert2';
 const CommentCard = ({
   userId,
@@ -15,23 +16,24 @@ const CommentCard = ({
   commentId,
   postId,
   isAccount,
+  userProfile,
+  userId2
 }) => {
   const { user } = useSelector((state) => state.user);
   const dispatch = useDispatch();
 
   const deleteCommentHandle = async() => {
     await dispatch(deleteCommentOnPost(postId, commentId));
-    Swal.fire({
-      position: "bottom",
-      icon: "success",
-      title: `Your comment has been deleted` ,
-      showConfirmButton: false,
-      timer: 2000
-    });
+    
     if (isAccount) {
-      dispatch(getMyPosts());
-    } else {
-      dispatch(getFollowingPosts());
+      // console.log("from form")
+      await dispatch(getMyPosts());
+    } 
+    else if(userProfile){
+      await dispatch(getUserPosts(userId2))
+    }
+    else {
+      await dispatch(getFollowingPosts());
     }
   };
 
