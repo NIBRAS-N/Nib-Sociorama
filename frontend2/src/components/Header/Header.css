@@ -1,32 +1,46 @@
+.body {
+  background: #2980B9;
+  /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #FFFFFF, #6DD5FA, #2980B9);
+  /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #FFFFFF, #6DD5FA, #2980B9);
+  /* W3C, IE 10+/ Edge, Firefox 16+, Chrome 26+, Opera 12+, Safari 7+ */
+
+}
+
 .header {
-    display: flex;
-    justify-content: center;
-    align-items: center;
+  background-image: radial-gradient(circle 1027px at -1.2% 102%, rgba(240, 230, 142, 1) 0%, rgba(137, 228, 218, 1) 90%);
+
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+
+.header>a {
+  width: 2vmax;
+  height: 2vmax;
+  margin: 1vmax 4vmax;
+}
+
+.header>a>svg {
+  font-size: 2vmax;
+  transition: all 0.5s;
+  color: rgba(0, 0, 0, 0.445);
+}
+
+.header>a>svg:hover {
+  color: black;
+  transform: scale(1.2);
+}
+
+@media screen and (max-width: 600px) {
+  .header>a {
+    width: 8vw;
+    height: 8vw;
+    margin: 2vw 8vw;
   }
-  
-  .header > a {
-    width: 2vmax;
-    height: 2vmax;
-    margin: 1vmax 4vmax;
+
+  .header>a>svg {
+    font-size: 8vw;
   }
-  .header > a > svg {
-    font-size: 2vmax;
-    transition: all 0.5s;
-    color: rgba(0, 0, 0, 0.445);
-  }
-  
-  .header > a > svg:hover {
-    color: black;
-    transform: scale(1.2);
-  }
-  
-  @media screen and (max-width: 600px) {
-    .header > a {
-      width: 8vw;
-      height: 8vw;
-      margin: 2vw 8vw;
-    }
-    .header > a > svg {
-      font-size: 8vw;
-    }
-  }
+}

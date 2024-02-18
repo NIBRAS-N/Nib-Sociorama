@@ -249,9 +249,9 @@ const registerUser = (name, email, password, avatar) => async (dispatch) => {
       Swal.fire({
         position: "top-end",
         icon: "warning",
-        title: `Register Unsuccessful, might be username or email already used , ${error?.message} ` ,
+        title: `Register Unsuccessful \n might be username or email already used \n or Image missing\n ${error?.message} ` ,
         showConfirmButton: false,
-        timer: 3000
+        timer: 4000
       });
     }
 }

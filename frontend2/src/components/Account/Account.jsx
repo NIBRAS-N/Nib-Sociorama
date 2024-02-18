@@ -169,7 +169,7 @@ const Account = () => {
                   ))
                 ) : (
                   <Typography style={{ margin: "2vmax" }}>
-                    You have no followers
+                    ${user.name} have no followers
                   </Typography>
                 )}
               </div>

@@ -47,6 +47,7 @@ const userRegister = asyncHandler( async (req,res)=>{
     // console.log("req.files ", req.file);
 
     if(!avatarLocalPath) {
+        // return res.status(400,new ApiResponse(400,{},"Profile Picture is required"));
         throw new ApiError(400,"avatar file is required");
     }
     

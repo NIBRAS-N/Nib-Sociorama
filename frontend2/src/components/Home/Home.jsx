@@ -87,7 +87,7 @@ import {clearErrorsLikeSlice,clearMessage} from "../../Slices/likeSlice.js"
             />
           ))  
         ) : (
-          <Typography variant="h6">No posts yet</Typography>
+          <Typography variant="h6">No posts yet , Start Following People, You will see their posts then.</Typography>
         )}
       </div>
       <div className="homeright">

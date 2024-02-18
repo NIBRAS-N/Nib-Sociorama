@@ -140,7 +140,7 @@ const Post = ({
         onClick={() => setLikesUser(!likesUser)}
         disabled={likes.length === 0 ? true : false}
       >
-        <Typography>{likes.length} Likes</Typography>
+        <Typography  sx={{padding:1, backgroundColor: '#CFDEF3'}}>{likes.length} Likes</Typography>
       </button>
 
       <div className="postFooter">

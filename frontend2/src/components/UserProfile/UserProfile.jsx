@@ -193,7 +193,7 @@ const UserProfile = () => {
               ))
             ) : (
               <Typography style={{ margin: "2vmax" }}>
-                You have no followers
+                {user.name} have no followers
               </Typography>
             )}
           </div>
@@ -217,7 +217,7 @@ const UserProfile = () => {
               ))
             ) : (
               <Typography style={{ margin: "2vmax" }}>
-                You're not following anyone
+                {user.name} is not following anyone
               </Typography>
             )}
           </div>
