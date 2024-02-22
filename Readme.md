@@ -4,7 +4,7 @@
 
 - #### `NOTE: THis project follows industry-standard file structure and adheres to clean code principles to ensure readability, maintainability, and scalability.`
 -[ Model Link](https://app.eraser.io/workspace/6JWO633DW6ZJSQVJ2vxI)
-
+- <img src="mod.PNG">
 ## Features
 
 - **User Authentication:** Secure user authentication to ensure the privacy and security of user accounts.
