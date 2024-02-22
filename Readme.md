@@ -3,7 +3,7 @@
 **Nib-Sociorama** is a platform where users can connect, share, and engage with each other through posts, comments, likes, and follows.
 
 - #### `NOTE: THis project follows industry-standard file structure and adheres to clean code principles to ensure readability, maintainability, and scalability.`
--[ Model Link](https://app.eraser.io/workspace/zfwdSBDBMOYrpzcu1a4G)
+-[ Model Link](https://app.eraser.io/workspace/6JWO633DW6ZJSQVJ2vxI)
 
 ## Features
 
